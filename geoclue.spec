@@ -18,6 +18,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	dbus-devel
 BuildRequires:	dbus-glib-devel
+BuildRequires:	gammu-devel >= 1.25.0
 BuildRequires:	glib2-devel
 BuildRequires:	gpsd-devel
 BuildRequires:	gtk-doc
