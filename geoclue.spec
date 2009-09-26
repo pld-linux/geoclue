@@ -2,13 +2,14 @@
 # cd geoclue
 # git archive master --prefix geoclue/ | bzip2 > geoclue-$(date +%Y%m%d).tar.bz2
 
-%define		snap 20090810
+%define		snap 20090926
 Summary:	A modular geoinformation service
 Name:		geoclue
 Version:	0.11.1.1
 Release:	0.%{snap}.1
 Source0:	%{name}-%{snap}.tar.bz2
-# Source0-md5:	baa340c41a5fc36244fd02117315e131
+# Source0-md5:	af4e7cef4d6f70a82532e62ce3fb38e2
+Patch0:		%{name}-configure.patch
 License:	LGPLv2
 Group:		Libraries
 URL:		http://geoclue.freedesktop.org/
@@ -74,6 +75,7 @@ A gypsy provider for geoclue
 
 %prep
 %setup -q -n %{name}
+%patch0 -p1
 
 %build
 %{__gtkdocize}
@@ -85,6 +87,10 @@ A gypsy provider for geoclue
 %configure \
 	--disable-static \
 	--enable-gtk-doc \
+	--enable-gpsd=yes \
+	--enable-gsmloc=yes \
+	--enable-gypsy=yes \
+	--enable-skyhook=yes \
 	--with-html-dir=%{_gtkdocdir}
 
 %{__make}
@@ -109,25 +115,31 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Master.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Example.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Geonames.service
+%{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Gsmloc.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Hostip.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Localnet.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Manual.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Plazes.service
+%{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Skyhook.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Yahoo.service
 %{_datadir}/geoclue-providers/geoclue-example.provider
 %{_datadir}/geoclue-providers/geoclue-geonames.provider
+%{_datadir}/geoclue-providers/geoclue-gsmloc.provider
 %{_datadir}/geoclue-providers/geoclue-hostip.provider
 %{_datadir}/geoclue-providers/geoclue-localnet.provider
 %{_datadir}/geoclue-providers/geoclue-manual.provider
 %{_datadir}/geoclue-providers/geoclue-plazes.provider
+%{_datadir}/geoclue-providers/geoclue-skyhook.provider
 %{_datadir}/geoclue-providers/geoclue-yahoo.provider
 %attr(755,root,root) %{_libexecdir}/geoclue-example
 %attr(755,root,root) %{_libexecdir}/geoclue-geonames
+%attr(755,root,root) %{_libexecdir}/geoclue-gsmloc
 %attr(755,root,root) %{_libexecdir}/geoclue-hostip
 %attr(755,root,root) %{_libexecdir}/geoclue-localnet
 %attr(755,root,root) %{_libexecdir}/geoclue-manual
 %attr(755,root,root) %{_libexecdir}/geoclue-master
 %attr(755,root,root) %{_libexecdir}/geoclue-plazes
+%attr(755,root,root) %{_libexecdir}/geoclue-skyhook
 %attr(755,root,root) %{_libexecdir}/geoclue-yahoo
 
 %files devel

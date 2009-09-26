@@ -1,0 +1,11 @@
+--- geoclue/configure.ac~	2009-08-20 23:16:27.000000000 +0200
++++ geoclue/configure.ac	2009-09-26 17:26:43.042856046 +0200
+@@ -209,7 +209,7 @@
+                              enable_gpsd=auto)
+ 
+ if test "x$enable_gpsd" != "xno"; then
+-   AC_CHECK_LIB(gps, gps_open,[libgps=yes] )
++   AC_CHECK_LIB(gps, gps_open,[have_gpsd=yes] )
+    if test "x$have_gpsd" = "xyes"; then
+       PROVIDER_SUBDIRS="$PROVIDER_SUBDIRS gpsd"
+       GPSD_LIBS="-lgps"
