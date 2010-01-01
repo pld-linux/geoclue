@@ -2,7 +2,7 @@
 # cd geoclue
 # git archive master --prefix geoclue/ | bzip2 > geoclue-$(date +%Y%m%d).tar.bz2
 
-%define		snap 20090926
+%define		snap 20100101
 Summary:	A modular geoinformation service
 Name:		geoclue
 Version:	0.11.1.1
@@ -25,6 +25,7 @@ BuildRequires:	gpsd-devel
 BuildRequires:	gtk-doc
 BuildRequires:	gtk+2-devel
 BuildRequires:	gypsy-devel
+BuildRequires:	libsoup-gnome-devel
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel
 Requires:	dbus
