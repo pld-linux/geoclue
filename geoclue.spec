@@ -92,6 +92,7 @@ A gypsy provider for geoclue
 	--enable-gpsd=yes \
 	--enable-gsmloc=yes \
 	--enable-gypsy=yes \
+	--enable-networkmanager=yes \
 	--enable-skyhook=yes \
 	--with-html-dir=%{_gtkdocdir}
 
