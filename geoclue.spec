@@ -6,7 +6,7 @@
 Summary:	A modular geoinformation service
 Name:		geoclue
 Version:	0.11.1.1
-Release:	0.%{snap}.2
+Release:	0.%{snap}.3
 Source0:	%{name}-%{snap}.tar.bz2
 # Source0-md5:	af4e7cef4d6f70a82532e62ce3fb38e2
 Patch0:		%{name}-configure.patch
@@ -89,6 +89,7 @@ A gypsy provider for geoclue
 %configure \
 	--disable-static \
 	--enable-gtk-doc \
+	--enable-conic=no \
 	--enable-gpsd=yes \
 	--enable-gsmloc=yes \
 	--enable-gypsy=yes \
@@ -154,7 +155,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files apidocs
 %defattr(644,root,root,755)
-%{_gtkdocdir}/geoclue/
+%{_gtkdocdir}/geoclue
 
 %files gpsd
 %defattr(644,root,root,755)
