@@ -19,11 +19,12 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	dbus-devel
 BuildRequires:	dbus-glib-devel
+BuildRequires:	docbook-dtd412-xml
 BuildRequires:	gammu-devel >= 1.25.0
 BuildRequires:	glib2-devel
 BuildRequires:	gpsd-devel
-BuildRequires:	gtk-doc
 BuildRequires:	gtk+2-devel
+BuildRequires:	gtk-doc
 BuildRequires:	gypsy-devel
 BuildRequires:	libsoup-gnome-devel
 BuildRequires:	libtool
