@@ -1,9 +1,6 @@
 # git clone --depth 1 git://anongit.freedesktop.org/geoclue
 # cd geoclue
 # git archive master --prefix geoclue/ | bzip2 > geoclue-$(date +%Y%m%d).tar.bz2
-#
-# TODO:
-# - Package nominatim files?
 
 Summary:	A modular geoinformation service
 Name:		geoclue
@@ -125,6 +122,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Hostip.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Localnet.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Manual.service
+%{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Nominatim.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Plazes.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Skyhook.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Yahoo.service
@@ -134,6 +132,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/geoclue-providers/geoclue-hostip.provider
 %{_datadir}/geoclue-providers/geoclue-localnet.provider
 %{_datadir}/geoclue-providers/geoclue-manual.provider
+%{_datadir}/geoclue-providers/geoclue-nominatim.provider
 %{_datadir}/geoclue-providers/geoclue-plazes.provider
 %{_datadir}/geoclue-providers/geoclue-skyhook.provider
 %{_datadir}/geoclue-providers/geoclue-yahoo.provider
@@ -144,6 +143,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/geoclue-localnet
 %attr(755,root,root) %{_libexecdir}/geoclue-manual
 %attr(755,root,root) %{_libexecdir}/geoclue-master
+%attr(755,root,root) %{_libexecdir}/geoclue-nominatim
 %attr(755,root,root) %{_libexecdir}/geoclue-plazes
 %attr(755,root,root) %{_libexecdir}/geoclue-skyhook
 %attr(755,root,root) %{_libexecdir}/geoclue-yahoo
