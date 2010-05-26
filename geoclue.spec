@@ -1,14 +1,16 @@
 # git clone --depth 1 git://anongit.freedesktop.org/geoclue
 # cd geoclue
 # git archive master --prefix geoclue/ | bzip2 > geoclue-$(date +%Y%m%d).tar.bz2
+#
+# TODO:
+# - Package nominatim files?
 
-%define		snap 20100101
 Summary:	A modular geoinformation service
 Name:		geoclue
-Version:	0.11.1.1
-Release:	0.%{snap}.4
-Source0:	%{name}-%{snap}.tar.bz2
-# Source0-md5:	af4e7cef4d6f70a82532e62ce3fb38e2
+Version:	0.12.0
+Release:	0.1
+Source0:	http://folks.o-hand.com/jku/geoclue-releases/%{name}-%{version}.tar.gz
+# Source0-md5:	33af8307f332e0065af056ecba65fec2
 Patch0:		%{name}-configure.patch
 License:	LGPLv2
 Group:		Libraries
@@ -22,7 +24,7 @@ BuildRequires:	dbus-glib-devel
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	gammu-devel >= 1.25.0
 BuildRequires:	glib2-devel
-BuildRequires:	gpsd-devel
+BuildRequires:	gpsd-devel >= 2.90
 BuildRequires:	gtk+2-devel
 BuildRequires:	gtk-doc
 BuildRequires:	gypsy-devel
@@ -61,7 +63,7 @@ Developer documentation for geoclue
 Summary:	gpsd provider for geoclue
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	gpsd
+Requires:	gpsd >= 2.90
 
 %description gpsd
 A gpsd provider for geoclue
@@ -76,7 +78,7 @@ Requires:	gypsy
 A gypsy provider for geoclue
 
 %prep
-%setup -q -n %{name}
+%setup -q -n %{name}-%{version}
 %patch0 -p1
 
 %build

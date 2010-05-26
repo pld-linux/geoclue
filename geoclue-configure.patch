@@ -1,5 +1,5 @@
---- geoclue/configure.ac~	2009-08-20 23:16:27.000000000 +0200
-+++ geoclue/configure.ac	2009-09-26 17:26:43.042856046 +0200
+--- geoclue/configure.ac~	2010-03-25 23:40:43.000000000 +0200
++++ geoclue/configure.ac	2010-05-26 13:39:14.000000000 +0300
 @@ -123,7 +123,7 @@
  if test "x$enable_networkmanager" != "xno"; then
     PKG_CHECK_MODULES(NETWORK_MANAGER,
@@ -9,12 +9,3 @@
     ], have_networkmanager="yes", have_networkmanager="no")
  
     if test "x$have_networkmanager" = "xyes"; then
-@@ -209,7 +209,7 @@
-                              enable_gpsd=auto)
- 
- if test "x$enable_gpsd" != "xno"; then
--   AC_CHECK_LIB(gps, gps_open,[libgps=yes] )
-+   AC_CHECK_LIB(gps, gps_open,[have_gpsd=yes] )
-    if test "x$have_gpsd" = "xyes"; then
-       PROVIDER_SUBDIRS="$PROVIDER_SUBDIRS gpsd"
-       GPSD_LIBS="-lgps"
