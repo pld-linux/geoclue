@@ -5,27 +5,25 @@
 Summary:	A modular geoinformation service
 Name:		geoclue
 Version:	0.12.0
-Release:	0.1
+Release:	1
+License:	LGPL v2
+Group:		Libraries
 Source0:	http://folks.o-hand.com/jku/geoclue-releases/%{name}-%{version}.tar.gz
 # Source0-md5:	33af8307f332e0065af056ecba65fec2
 Patch0:		%{name}-configure.patch
-License:	LGPLv2
-Group:		Libraries
 URL:		http://geoclue.freedesktop.org/
 BuildRequires:	GConf2-devel
 BuildRequires:	NetworkManager-devel
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
-BuildRequires:	dbus-devel
 BuildRequires:	dbus-glib-devel
 BuildRequires:	docbook-dtd412-xml
-BuildRequires:	gammu-devel >= 1.25.0
 BuildRequires:	glib2-devel
-BuildRequires:	gpsd-devel >= 2.90
+BuildRequires:	gpsd-devel >= 2.91
 BuildRequires:	gtk+2-devel
 BuildRequires:	gtk-doc
 BuildRequires:	gypsy-devel
-BuildRequires:	libsoup-gnome-devel
+BuildRequires:	libsoup-gnome-devel >= 2.4.0
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel
 Requires:	dbus
@@ -40,9 +38,8 @@ location-aware applications as simple as possible.
 Summary:	Development package for geoclue
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	dbus-devel
+Requires:	dbus-glib-devel
 Requires:	libxml2-devel
-Requires:	pkgconfig
 
 %description devel
 Files for development with geoclue.
@@ -50,8 +47,7 @@ Files for development with geoclue.
 %package apidocs
 Summary:	Developer documentation for geoclue
 Group:		Development/Libraries
-Requires:	%{name} = %{version}-%{release}
-Requires:	gtk-doc
+Requires:	gtk-doc-common
 
 %description apidocs
 Developer documentation for geoclue
@@ -60,7 +56,7 @@ Developer documentation for geoclue
 Summary:	gpsd provider for geoclue
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	gpsd >= 2.90
+Requires:	gpsd >= 2.91
 
 %description gpsd
 A gpsd provider for geoclue
@@ -75,7 +71,7 @@ Requires:	gypsy
 A gypsy provider for geoclue
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q
 %patch0 -p1
 
 %build
@@ -90,7 +86,6 @@ A gypsy provider for geoclue
 	--enable-gtk-doc \
 	--enable-conic=no \
 	--enable-gpsd=yes \
-	--enable-gsmloc=yes \
 	--enable-gypsy=yes \
 	--enable-networkmanager=yes \
 	--enable-skyhook=yes \
@@ -100,6 +95,7 @@ A gypsy provider for geoclue
 
 %install
 rm -rf $RPM_BUILD_ROOT
+
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
@@ -111,7 +107,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS COPYING README
+%doc AUTHORS README
 %dir %{_datadir}/geoclue-providers
 %attr(755,root,root) %{_libdir}/libgeoclue.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libgeoclue.so.0
@@ -150,10 +146,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libgeoclue.so
+%{_libdir}/libgeoclue.la
 %{_includedir}/geoclue
 %{_pkgconfigdir}/geoclue.pc
-%{_libdir}/libgeoclue.so
-%{_libdir}/libgeoclue.la
 
 %files apidocs
 %defattr(644,root,root,755)
@@ -161,12 +157,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files gpsd
 %defattr(644,root,root,755)
-%{_libexecdir}/geoclue-gpsd
+%attr(755,root,root) %{_libexecdir}/geoclue-gpsd
 %{_datadir}/geoclue-providers/geoclue-gpsd.provider
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Gpsd.service
 
 %files gypsy
 %defattr(644,root,root,755)
-%{_libexecdir}/geoclue-gypsy
+%attr(755,root,root) %{_libexecdir}/geoclue-gypsy
 %{_datadir}/geoclue-providers/geoclue-gypsy.provider
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Gypsy.service
