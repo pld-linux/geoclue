@@ -5,7 +5,7 @@
 Summary:	A modular geoinformation service
 Name:		geoclue
 Version:	0.12.0
-Release:	1
+Release:	2
 License:	LGPL v2
 Group:		Libraries
 Source0:	http://folks.o-hand.com/jku/geoclue-releases/%{name}-%{version}.tar.gz
