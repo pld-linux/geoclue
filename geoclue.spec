@@ -2,13 +2,14 @@ Summary:	A modular geoinformation service
 Summary(pl.UTF-8):	Modularna usługa geoinformacyjna
 Name:		geoclue
 Version:	0.12.0
-Release:	4
+Release:	5
 License:	LGPL v2
 Group:		Applications
 Source0:	http://folks.o-hand.com/jku/geoclue-releases/%{name}-%{version}.tar.gz
 # Source0-md5:	33af8307f332e0065af056ecba65fec2
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-libsoup.patch
+Patch2:		%{name}-nm09.patch
 URL:		http://geoclue.freedesktop.org/
 BuildRequires:	GConf2-devel >= 2.0
 BuildRequires:	NetworkManager-devel
@@ -120,6 +121,7 @@ Interfejs geoclue do gypsy.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__gtkdocize}
