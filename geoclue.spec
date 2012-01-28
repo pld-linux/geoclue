@@ -1,8 +1,9 @@
+%bcond_with	gps
 Summary:	A modular geoinformation service
 Summary(pl.UTF-8):	Modularna usługa geoinformacyjna
 Name:		geoclue
 Version:	0.12.0
-Release:	10
+Release:	11
 License:	LGPL v2
 Group:		Applications
 Source0:	http://folks.o-hand.com/jku/geoclue-releases/%{name}-%{version}.tar.gz
@@ -10,6 +11,7 @@ Source0:	http://folks.o-hand.com/jku/geoclue-releases/%{name}-%{version}.tar.gz
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-libsoup.patch
 Patch2:		%{name}-nm09.patch
+Patch3:		geoclue-unused-var.patch
 URL:		http://geoclue.freedesktop.org/
 BuildRequires:	GConf2-devel >= 2.0
 BuildRequires:	NetworkManager-devel
@@ -18,7 +20,7 @@ BuildRequires:	automake >= 1:1.9
 BuildRequires:	dbus-glib-devel >= 0.60
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	glib2-devel >= 1:2.0
-BuildRequires:	gpsd-devel >= 2.91
+%{?with_gps:BuildRequires:	gpsd-devel >= 2.91}
 BuildRequires:	gtk+2-devel >= 1:2.0
 BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	gypsy-devel
@@ -122,6 +124,7 @@ Interfejs geoclue do gypsy.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %{__gtkdocize}
@@ -133,7 +136,7 @@ Interfejs geoclue do gypsy.
 %configure \
 	--enable-gtk-doc \
 	--disable-conic \
-	--enable-gpsd \
+	--enable-gpsd%{?!with_gps:=no} \
 	--enable-gypsy \
 	--enable-networkmanager \
 	--enable-skyhook \
@@ -211,11 +214,13 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_gtkdocdir}/geoclue
 
+%if %{with gps}
 %files gpsd
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/geoclue-gpsd
 %{_datadir}/geoclue-providers/geoclue-gpsd.provider
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Gpsd.service
+%endif
 
 %files gypsy
 %defattr(644,root,root,755)
