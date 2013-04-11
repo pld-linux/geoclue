@@ -2,16 +2,13 @@
 Summary:	A modular geoinformation service
 Summary(pl.UTF-8):	Modularna usługa geoinformacyjna
 Name:		geoclue
-Version:	0.12.0
-Release:	11
+Version:	0.12.99
+Release:	1
 License:	LGPL v2
 Group:		Applications
-Source0:	http://folks.o-hand.com/jku/geoclue-releases/%{name}-%{version}.tar.gz
-# Source0-md5:	33af8307f332e0065af056ecba65fec2
-Patch0:		%{name}-configure.patch
-Patch1:		%{name}-libsoup.patch
-Patch2:		%{name}-nm09.patch
-Patch3:		geoclue-unused-var.patch
+Source0:	http://freedesktop.org/~hadess/%{name}-%{version}.tar.gz
+# Source0-md5:	779245045bfeeec4853da8baaa3a18e6
+Patch0:		%{name}-libsoup.patch
 URL:		http://geoclue.freedesktop.org/
 BuildRequires:	GConf2-devel >= 2.0
 BuildRequires:	NetworkManager-devel
@@ -122,9 +119,6 @@ Interfejs geoclue do gypsy.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 %build
 %{__gtkdocize}
@@ -173,6 +167,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/geoclue-skyhook
 %attr(755,root,root) %{_libexecdir}/geoclue-yahoo
 %dir %{_datadir}/geoclue-providers
+%{_datadir}/GConf/gsettings/geoclue
 %{_datadir}/geoclue-providers/geoclue-example.provider
 %{_datadir}/geoclue-providers/geoclue-geonames.provider
 %{_datadir}/geoclue-providers/geoclue-gsmloc.provider
@@ -183,6 +178,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/geoclue-providers/geoclue-plazes.provider
 %{_datadir}/geoclue-providers/geoclue-skyhook.provider
 %{_datadir}/geoclue-providers/geoclue-yahoo.provider
+%{_datadir}/glib-2.0/schemas/org.freedesktop.Geoclue.gschema.xml
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Master.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Example.service
 %{_datadir}/dbus-1/services/org.freedesktop.Geoclue.Providers.Geonames.service
