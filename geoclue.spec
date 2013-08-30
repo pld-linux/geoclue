@@ -1,26 +1,30 @@
-%bcond_with	gps
+#
+# Conditional build:
+%bcond_without	gps	# GPS support via gpsd
+#
 Summary:	A modular geoinformation service
 Summary(pl.UTF-8):	Modularna usługa geoinformacyjna
 Name:		geoclue
 Version:	0.12.99
 Release:	2
-License:	LGPL v2
+License:	LGPL v2+
 Group:		Applications
 Source0:	http://freedesktop.org/~hadess/%{name}-%{version}.tar.gz
 # Source0-md5:	779245045bfeeec4853da8baaa3a18e6
 Patch0:		%{name}-libsoup.patch
+Patch1:		%{name}-gpsd.patch
 URL:		http://geoclue.freedesktop.org/
 BuildRequires:	GConf2-devel >= 2.0
 BuildRequires:	NetworkManager-devel
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake >= 1:1.9
-BuildRequires:	dbus-glib-devel >= 0.60
+BuildRequires:	dbus-glib-devel >= 0.86
 BuildRequires:	docbook-dtd412-xml
-BuildRequires:	glib2-devel >= 1:2.0
-%{?with_gps:BuildRequires:	gpsd-devel >= 2.91}
+BuildRequires:	glib2-devel >= 1:2.26
+%{?with_gps:BuildRequires:	gpsd-devel >= 3}
 BuildRequires:	gtk+2-devel >= 1:2.0
 BuildRequires:	gtk-doc >= 1.0
-BuildRequires:	gypsy-devel
+BuildRequires:	gypsy-devel >= 0.7.1
 BuildRequires:	libsoup-devel >= 2.4.0
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.0
@@ -43,7 +47,8 @@ ułatwienie tworzenia aplikacji uwzględniających lokalizację.
 Summary:	Geoclue modular geoinformation service library
 Summary(pl.UTF-8):	Biblioteka geoclue - modularnej usługi geoinformacyjnej
 Group:		Libraries
-Requires:	dbus-glib >= 0.60
+Requires:	dbus-glib >= 0.86
+Requires:	glib2 >= 1:2.26
 Conflicts:	geoclue < 0.12.0-3
 
 %description libs
@@ -57,7 +62,8 @@ Summary:	Development package for geoclue
 Summary(pl.UTF-8):	Pakiet programistyczny geoclue
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	dbus-glib-devel >= 0.60
+Requires:	dbus-glib-devel >= 0.86
+Requires:	glib2-devel >= 1:2.26
 Requires:	libxml2-devel >= 2.0
 
 %description devel
@@ -95,7 +101,7 @@ Summary:	gpsd provider for geoclue
 Summary(pl.UTF-8):	Interfejs geoclue do gpsd
 Group:		Applications
 Requires:	%{name} = %{version}-%{release}
-Requires:	gpsd >= 2.91
+Requires:	gpsd >= 3
 
 %description gpsd
 A gpsd provider for geoclue.
@@ -108,7 +114,7 @@ Summary:	gypsy provider for geoclue
 Summary(pl.UTF-8):	Interfejs geoclue do gypsy
 Group:		Applications
 Requires:	%{name} = %{version}-%{release}
-Requires:	gypsy
+Requires:	gypsy >= 0.7.1
 
 %description gypsy
 A gypsy provider for geoclue.
@@ -119,6 +125,7 @@ Interfejs geoclue do gypsy.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %{__gtkdocize}
@@ -130,9 +137,10 @@ Interfejs geoclue do gypsy.
 %configure \
 	--enable-gtk-doc \
 	--disable-conic \
-	--enable-gpsd%{?!with_gps:=no} \
+	--enable-gpsd%{!?with_gps:=no} \
 	--enable-gypsy \
 	--enable-networkmanager \
+	--disable-silent-rules \
 	--enable-skyhook \
 	--with-html-dir=%{_gtkdocdir}
 

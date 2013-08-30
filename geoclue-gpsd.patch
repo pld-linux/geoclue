@@ -1,0 +1,60 @@
+--- geoclue-0.12.99/providers/gpsd/geoclue-gpsd.c.orig	2012-07-31 18:47:05.000000000 +0200
++++ geoclue-0.12.99/providers/gpsd/geoclue-gpsd.c	2013-08-30 16:49:28.898513583 +0200
+@@ -33,6 +33,7 @@
+ 
+ #include <math.h>
+ #include <gps.h>
++#include <stdlib.h>
+ #include <string.h>
+ 
+ #include <geoclue/geoclue-error.h>
+@@ -40,7 +41,6 @@
+ #include <geoclue/gc-iface-position.h>
+ #include <geoclue/gc-iface-velocity.h>
+ 
+-typedef struct gps_data_t gps_data;
+ typedef struct gps_fix_t gps_fix;
+ 
+ /* only listing used tags */
+@@ -59,7 +59,7 @@
+ 	char *host;
+ 	char *port;
+ 	
+-	gps_data *gpsdata;
++	struct gps_data_t *gpsdata;
+ 	
+ 	gps_fix *last_fix;
+ 	
+@@ -397,12 +397,13 @@
+ static gboolean
+ geoclue_gpsd_start_gpsd (GeoclueGpsd *self)
+ {
+-	self->gpsdata = gps_open (self->host, self->port);
+-	if (self->gpsdata) {
+-		gps_stream(self->gpsdata, WATCH_ENABLE | WATCH_NMEA | POLL_NONBLOCK, NULL);
+-		gps_set_raw_hook (self->gpsdata, gpsd_raw_hook);
++	struct gps_data_t *gd = calloc (1, sizeof(struct gps_data_t));
++	if (gd && (gps_open (self->host, self->port, gd) >= 0)) {
++		self->gpsdata = gd;
++		gps_stream(self->gpsdata, WATCH_ENABLE | WATCH_NMEA | WATCH_RAW, NULL);
+ 		return TRUE;
+ 	} else {
++		free (gd);
+ 		g_warning ("gps_open() failed, is gpsd running (host=%s,port=%s)?", self->host, self->port);
+ 		return FALSE;
+ 	}
+@@ -413,10 +414,13 @@
+ {
+ 	GeoclueGpsd *self = (GeoclueGpsd*)data;
+ 	if (self->gpsdata) {
+-		if (gps_poll(self->gpsdata) < 0) {
++		if (gps_read(self->gpsdata) < 0) {
+ 			geoclue_gpsd_set_status (self, GEOCLUE_STATUS_ERROR);
+ 			geoclue_gpsd_stop_gpsd(self);
+ 			return FALSE;
++		} else if(self->gpsdata->set) {
++			gpsd_raw_hook(self->gpsdata, NULL, 0);
++			self->gpsdata->set = 0;
+ 		}
+ 	}
+ 	return TRUE;
