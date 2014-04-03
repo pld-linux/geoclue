@@ -1,12 +1,12 @@
 #
 # Conditional build:
 %bcond_without	gps	# GPS support via gpsd
-#
+
 Summary:	A modular geoinformation service
 Summary(pl.UTF-8):	Modularna usługa geoinformacyjna
 Name:		geoclue
 Version:	0.12.99
-Release:	2
+Release:	3
 License:	LGPL v2+
 Group:		Applications
 Source0:	http://freedesktop.org/~hadess/%{name}-%{version}.tar.gz
@@ -89,6 +89,9 @@ Summary:	Developer documentation for geoclue
 Summary(pl.UTF-8):	Dokumentacja programisty do geoclue
 Group:		Development/Libraries
 Requires:	gtk-doc-common
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description apidocs
 Developer documentation for geoclue.
