@@ -13,6 +13,7 @@ Source0:	http://freedesktop.org/~hadess/%{name}-%{version}.tar.gz
 # Source0-md5:	779245045bfeeec4853da8baaa3a18e6
 Patch0:		%{name}-libsoup.patch
 Patch1:		%{name}-gpsd.patch
+Patch2:		%{name}-format.patch
 URL:		http://geoclue.freedesktop.org/
 BuildRequires:	GConf2-devel >= 2.0
 BuildRequires:	NetworkManager-devel
@@ -129,6 +130,7 @@ Interfejs geoclue do gypsy.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__gtkdocize}

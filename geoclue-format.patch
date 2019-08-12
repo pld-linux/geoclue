@@ -1,0 +1,11 @@
+--- geoclue-0.12.99/configure.ac.orig	2019-08-12 23:10:56.302187404 +0200
++++ geoclue-0.12.99/configure.ac	2019-08-12 23:11:19.675432391 +0200
+@@ -64,7 +64,7 @@
+ AC_SUBST(DBUS_SERVICES_DIR)
+ AC_DEFINE_UNQUOTED(DBUS_SERVICES_DIR, "$DBUS_SERVICES_DIR", [Where services dir for D-Bus is])
+ 
+-CFLAGS="$CFLAGS -g -Wall -Wno-format"
++CFLAGS="$CFLAGS -g -Wall"
+ 
+ # -----------------------------------------------------------
+ # gtk+
