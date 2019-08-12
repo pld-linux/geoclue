@@ -6,7 +6,7 @@ Summary:	A modular geoinformation service
 Summary(pl.UTF-8):	Modularna usługa geoinformacyjna
 Name:		geoclue
 Version:	0.12.99
-Release:	4
+Release:	5
 License:	LGPL v2+
 Group:		Applications
 Source0:	http://freedesktop.org/~hadess/%{name}-%{version}.tar.gz
@@ -16,7 +16,6 @@ Patch1:		%{name}-gpsd.patch
 Patch2:		%{name}-format.patch
 URL:		http://geoclue.freedesktop.org/
 BuildRequires:	GConf2-devel >= 2.0
-BuildRequires:	NetworkManager-devel
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake >= 1:1.9
 BuildRequires:	dbus-glib-devel >= 0.86
@@ -144,7 +143,7 @@ Interfejs geoclue do gypsy.
 	--disable-conic \
 	--enable-gpsd%{!?with_gps:=no} \
 	--enable-gypsy \
-	--enable-networkmanager \
+	--disable-networkmanager \
 	--disable-silent-rules \
 	--enable-skyhook \
 	--with-html-dir=%{_gtkdocdir}
