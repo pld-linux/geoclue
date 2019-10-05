@@ -1,12 +1,15 @@
 #
 # Conditional build:
 %bcond_without	gps	# GPS support via gpsd
+%bcond_with	conic	# Maemo LibConIC connectivity support
+%bcond_with	connman	# ConnMan connectivity support
+%bcond_without	nm	# NetworkManager connectivity support
 
 Summary:	A modular geoinformation service
 Summary(pl.UTF-8):	Modularna usługa geoinformacyjna
 Name:		geoclue
 Version:	0.12.99
-Release:	5
+Release:	6
 License:	LGPL v2+
 Group:		Applications
 Source0:	http://freedesktop.org/~hadess/%{name}-%{version}.tar.gz
@@ -14,21 +17,26 @@ Source0:	http://freedesktop.org/~hadess/%{name}-%{version}.tar.gz
 Patch0:		%{name}-libsoup.patch
 Patch1:		%{name}-gpsd.patch
 Patch2:		%{name}-format.patch
+Patch3:		%{name}-nm.patch
 URL:		http://geoclue.freedesktop.org/
 BuildRequires:	GConf2-devel >= 2.0
+%{?with_nm:BuildRequires:	NetworkManager-devel >= 1.0}
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake >= 1:1.9
+%{?with_connman:BuildRequires:	connman-devel}
 BuildRequires:	dbus-glib-devel >= 0.86
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	glib2-devel >= 1:2.26
-%{?with_gps:BuildRequires:	gpsd-devel >= 3}
+%{?with_gps:BuildRequires:	gpsd-devel >= 3.18}
 BuildRequires:	gtk+2-devel >= 1:2.0
 BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	gypsy-devel >= 0.7.1
+%{?with_conic:BuildRequires:	libconic-devel}
 BuildRequires:	libsoup-devel >= 2.4.0
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	libxslt-progs
+BuildRequires:	pkgconfig
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	dbus
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -104,7 +112,7 @@ Summary:	gpsd provider for geoclue
 Summary(pl.UTF-8):	Interfejs geoclue do gpsd
 Group:		Applications
 Requires:	%{name} = %{version}-%{release}
-Requires:	gpsd >= 3
+Requires:	gpsd >= 3.18
 
 %description gpsd
 A gpsd provider for geoclue.
@@ -130,6 +138,7 @@ Interfejs geoclue do gypsy.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %{__gtkdocize}
@@ -140,10 +149,11 @@ Interfejs geoclue do gypsy.
 %{__automake}
 %configure \
 	--enable-gtk-doc \
-	--disable-conic \
+	--enable-conic%{!?with_conic:=no} \
+	--enable-connman%{!?with_connman:=no} \
 	--enable-gpsd%{!?with_gps:=no} \
 	--enable-gypsy \
-	--disable-networkmanager \
+	--enable-networkmanager%{!?with_nm:=no} \
 	--disable-silent-rules \
 	--enable-skyhook \
 	--with-html-dir=%{_gtkdocdir}

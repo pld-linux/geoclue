@@ -1,0 +1,135 @@
+--- geoclue-0.12.99/configure.ac.orig	2019-10-02 16:24:07.407947415 +0200
++++ geoclue-0.12.99/configure.ac	2019-10-04 20:51:53.104774152 +0200
+@@ -146,7 +146,7 @@
+ if test "x$enable_networkmanager" != "xno"; then
+    PKG_CHECK_MODULES(NETWORK_MANAGER,
+    [
+-      NetworkManager libnm-glib libnm-util
++      libnm
+    ], have_networkmanager="yes", have_networkmanager="no")
+ 
+    if test "x$have_networkmanager" = "xyes"; then
+--- geoclue-0.12.99/src/connectivity-networkmanager.h.orig	2012-07-31 18:47:05.000000000 +0200
++++ geoclue-0.12.99/src/connectivity-networkmanager.h	2019-10-04 21:12:16.438146786 +0200
+@@ -26,7 +26,7 @@
+ #define _CONNECTIVITY_NETWORKMANAGER_H
+ 
+ #include <glib-object.h>
+-#include <nm-client.h>
++#include <NetworkManager.h>
+ #include "connectivity.h"
+ 
+ 
+--- geoclue-0.12.99/src/connectivity-networkmanager.c.orig	2012-07-31 18:47:05.000000000 +0200
++++ geoclue-0.12.99/src/connectivity-networkmanager.c	2019-10-05 06:53:55.835747194 +0200
+@@ -34,10 +34,6 @@
+ 
+ #include <NetworkManager.h> /*for DBus strings */
+ 
+-#include <nm-client.h>
+-#include <nm-device-wifi.h>
+-#include <nm-setting-ip4-config.h>
+-
+ #if !defined(NM_CHECK_VERSION)
+ #define NM_CHECK_VERSION(x,y,z) 0
+ #endif
+@@ -106,7 +102,7 @@
+ 				char *ap_mac;
+ 				int strength;
+ 
+-				ap_mac = g_strdup (nm_access_point_get_hw_address (ap));
++				ap_mac = g_strdup (nm_access_point_get_bssid (ap));
+ 				strength = nm_access_point_get_strength (ap);
+ 				g_hash_table_insert (ht, ap_mac, GINT_TO_POINTER (strength_to_dbm (strength)));
+ 			}
+@@ -161,39 +157,22 @@
+ 	return mac_strup (mac);
+ }
+ 
+-static gchar *
+-ip4_address_as_string (guint32 ip)
+-{
+-	struct in_addr tmp_addr;
+-	char buf[INET_ADDRSTRLEN+1];
+-
+-	memset (&buf, '\0', sizeof (buf));
+-	tmp_addr.s_addr = ip;
+-
+-	if (inet_ntop (AF_INET, &tmp_addr, buf, INET_ADDRSTRLEN))
+-		return g_strdup (buf);
+-
+-	return NULL;
+-}
+-
+ static char *
+ get_router_mac (GeoclueConnectivity *iface)
+ {
+ 	GeoclueNetworkManager *self = GEOCLUE_NETWORKMANAGER (iface);
+ 	const GPtrArray *devices;
+-	char *gateway, *mac;
++	char *mac;
++	const char *gateway = NULL;
+ 	guint i;
+ 
+ 	devices = nm_client_get_devices (self->client);
+ 	if (devices == NULL)
+ 		return NULL;
+ 
+-	gateway = NULL;
+-
+ 	for (i = 0; i < devices->len; i++) {
+ 		NMDevice *device = g_ptr_array_index (devices, i);
+-		NMIP4Config *cfg4;
+-		GSList *iter;
++		NMIPConfig *cfg4;
+ 
+ 		if (nm_device_get_state (device) != NM_DEVICE_STATE_ACTIVATED)
+ 			continue;
+@@ -202,19 +181,12 @@
+ 		if (cfg4 == NULL)
+ 			continue;
+ 
+-		for (iter = (GSList *) nm_ip4_config_get_addresses (cfg4); iter; iter = g_slist_next (iter)) {
+-			NMIP4Address *addr = (NMIP4Address *) iter->data;
+-
+-			gateway = ip4_address_as_string (nm_ip4_address_get_gateway (addr));
+-			if (gateway != NULL)
+-				break;
+-		}
++		gateway = nm_ip_config_get_gateway (cfg4);
+ 	}
+ 	if (gateway == NULL)
+ 		return NULL;
+ 
+ 	mac = get_mac_for_gateway (gateway);
+-	g_free (gateway);
+ 
+ 	return mac;
+ }
+@@ -235,7 +207,7 @@
+ 		strength = nm_access_point_get_strength (ap);
+ 		if (strength > self->ap_strength) {
+ 			g_free (self->cache_ap_mac);
+-			self->cache_ap_mac = g_strdup (nm_access_point_get_hw_address (ap));
++			self->cache_ap_mac = g_strdup (nm_access_point_get_bssid (ap));
+ 			self->ap_strength = strength;
+ 		}
+ 	}
+@@ -317,7 +289,7 @@
+ 
+ 	old_status = self->status;
+ 
+-	if (nm_client_get_manager_running (self->client)) {
++	if (nm_client_get_nm_running (self->client)) {
+ 		state = nm_client_get_state (self->client);
+ 		self->status = nmstate_to_geocluenetworkstatus (state);
+ 		cache_ap_mac (self);
+@@ -341,7 +313,7 @@
+ geoclue_networkmanager_init (GeoclueNetworkManager *self)
+ {
+ 	self->status = GEOCLUE_CONNECTIVITY_UNKNOWN;
+-	self->client = nm_client_new ();
++	self->client = nm_client_new (NULL, NULL);
+ 	if (self->client == NULL) {
+ 		g_warning ("%s was unable to create a connection to NetworkManager",
+ 			   G_OBJECT_TYPE_NAME (self));

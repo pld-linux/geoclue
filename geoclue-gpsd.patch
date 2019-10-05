@@ -58,3 +58,105 @@
  		}
  	}
  	return TRUE;
+--- geoclue-0.12.99/providers/gpsd/geoclue-gpsd.c.orig	2019-10-04 21:09:50.492270776 +0200
++++ geoclue-0.12.99/providers/gpsd/geoclue-gpsd.c	2019-10-05 15:21:29.244100259 +0200
+@@ -43,15 +43,6 @@
+ 
+ typedef struct gps_fix_t gps_fix;
+ 
+-/* only listing used tags */
+-typedef enum {
+-	NMEA_NONE,
+-	NMEA_GSA,
+-	NMEA_GGA,
+-	NMEA_GSV,
+-	NMEA_RMC
+-} NmeaTag;
+-
+ 
+ typedef struct {
+ 	GcProvider parent;
+@@ -229,7 +220,7 @@
+ }
+ 
+ static void
+-geoclue_gpsd_update_position (GeoclueGpsd *gpsd, NmeaTag nmea_tag)
++geoclue_gpsd_update_position (GeoclueGpsd *gpsd)
+ {
+ 	gps_fix *fix = &gpsd->gpsdata->fix;
+ 	gps_fix *last_fix = gpsd->last_fix;
+@@ -280,7 +271,7 @@
+ }
+ 
+ static void
+-geoclue_gpsd_update_velocity (GeoclueGpsd *gpsd, NmeaTag nmea_tag)
++geoclue_gpsd_update_velocity (GeoclueGpsd *gpsd)
+ {
+ 	gps_fix *fix = &gpsd->gpsdata->fix;
+ 	gps_fix *last_fix = gpsd->last_fix;
+@@ -293,8 +284,7 @@
+ 	 * couldn't think of an smart way to handle this, I don't think there is one
+ 	 */
+ 	
+-	if (((gpsd->gpsdata->set & TRACK_SET) || (gpsd->gpsdata->set & SPEED_SET)) &&
+-	    nmea_tag == NMEA_RMC) {
++	if (((gpsd->gpsdata->set & TRACK_SET) || (gpsd->gpsdata->set & SPEED_SET))) {
+ 		
+ 		gpsd->gpsdata->set &= ~(TRACK_SET | SPEED_SET);
+ 		
+@@ -308,10 +298,7 @@
+ 			last_fix->track = fix->track;
+ 			last_fix->speed = fix->speed;
+ 		}
+-	} else if ((gpsd->gpsdata->set & CLIMB_SET) &&
+-	           (nmea_tag == NMEA_GGA || 
+-	            nmea_tag == NMEA_GSA || 
+-	            nmea_tag == NMEA_GSV)) {
++	} else if ((gpsd->gpsdata->set & CLIMB_SET)) {
+ 		
+ 		gpsd->gpsdata->set &= ~(CLIMB_SET);
+ 		
+@@ -342,7 +329,7 @@
+ }
+ 
+ static void
+-geoclue_gpsd_update_status (GeoclueGpsd *gpsd, NmeaTag nmea_tag)
++geoclue_gpsd_update_status (GeoclueGpsd *gpsd)
+ {
+ 	GeoclueStatus status;
+ 	
+@@ -367,22 +354,9 @@
+ static void 
+ gpsd_raw_hook (struct gps_data_t *gpsdata, char *message, size_t len)
+ {
+-	char *tag_str = gpsd->gpsdata->tag;
+-	NmeaTag nmea_tag = NMEA_NONE;
+-	
+-	if (tag_str[0] == 'G' && tag_str[1] == 'S' && tag_str[2] == 'A') {
+-		nmea_tag = NMEA_GSA;
+-	} else if (tag_str[0] == 'G' && tag_str[1] == 'G' && tag_str[2] == 'A') {
+-		nmea_tag = NMEA_GGA;
+-	} else if (tag_str[0] == 'G' && tag_str[1] == 'S' && tag_str[2] == 'V') {
+-		nmea_tag = NMEA_GSV;
+-	} else if (tag_str[0] == 'R' && tag_str[1] == 'M' && tag_str[2] == 'C') {
+-		nmea_tag = NMEA_RMC;
+-	}
+-	
+-	geoclue_gpsd_update_status (gpsd, nmea_tag);
+-	geoclue_gpsd_update_position (gpsd, nmea_tag);
+-	geoclue_gpsd_update_velocity (gpsd, nmea_tag);
++	geoclue_gpsd_update_status (gpsd);
++	geoclue_gpsd_update_position (gpsd);
++	geoclue_gpsd_update_velocity (gpsd);
+ }
+ 
+ static void
+@@ -414,7 +388,7 @@
+ {
+ 	GeoclueGpsd *self = (GeoclueGpsd*)data;
+ 	if (self->gpsdata) {
+-		if (gps_read(self->gpsdata) < 0) {
++		if (gps_read(self->gpsdata, NULL, 0) < 0) {
+ 			geoclue_gpsd_set_status (self, GEOCLUE_STATUS_ERROR);
+ 			geoclue_gpsd_stop_gpsd(self);
+ 			return FALSE;
