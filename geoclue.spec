@@ -97,9 +97,7 @@ Summary:	Developer documentation for geoclue
 Summary(pl.UTF-8):	Dokumentacja programisty do geoclue
 Group:		Development/Libraries
 Requires:	gtk-doc-common
-%if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
-%endif
 
 %description apidocs
 Developer documentation for geoclue.
