@@ -9,16 +9,16 @@ Summary:	A modular geoinformation service
 Summary(pl.UTF-8):	Modularna usługa geoinformacyjna
 Name:		geoclue
 Version:	0.12.99
-Release:	7
+Release:	8
 License:	LGPL v2+
 Group:		Applications
-Source0:	http://freedesktop.org/~hadess/%{name}-%{version}.tar.gz
+Source0:	https://people.freedesktop.org/~hadess/%{name}-%{version}.tar.gz
 # Source0-md5:	779245045bfeeec4853da8baaa3a18e6
 Patch0:		%{name}-libsoup.patch
 Patch1:		%{name}-gpsd.patch
 Patch2:		%{name}-format.patch
 Patch3:		%{name}-nm.patch
-URL:		http://geoclue.freedesktop.org/
+URL:		https://geoclue.freedesktop.org/
 BuildRequires:	GConf2-devel >= 2.0
 %{?with_nm:BuildRequires:	NetworkManager-devel >= 1.0}
 BuildRequires:	autoconf >= 2.59
@@ -27,7 +27,7 @@ BuildRequires:	automake >= 1:1.9
 BuildRequires:	dbus-glib-devel >= 0.86
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	glib2-devel >= 1:2.26
-%{?with_gps:BuildRequires:	gpsd-devel >= 3.18}
+%{?with_gps:BuildRequires:	gpsd-devel >= 3.21}
 BuildRequires:	gtk+2-devel >= 1:2.0
 BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	gypsy-devel >= 0.7.1
@@ -37,6 +37,7 @@ BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.0
 BuildRequires:	libxslt-progs
 BuildRequires:	pkgconfig
+BuildRequires:	rpm-build >= 4.6
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	dbus
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -110,7 +111,7 @@ Summary:	gpsd provider for geoclue
 Summary(pl.UTF-8):	Interfejs geoclue do gpsd
 Group:		Applications
 Requires:	%{name} = %{version}-%{release}
-Requires:	gpsd >= 3.18
+Requires:	gpsd >= 3.21
 
 %description gpsd
 A gpsd provider for geoclue.

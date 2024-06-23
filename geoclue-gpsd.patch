@@ -160,3 +160,56 @@
  			geoclue_gpsd_set_status (self, GEOCLUE_STATUS_ERROR);
  			geoclue_gpsd_stop_gpsd(self);
  			return FALSE;
+--- geoclue-0.12.99/providers/gpsd/geoclue-gpsd.c.orig	2024-06-23 12:38:55.516440776 +0200
++++ geoclue-0.12.99/providers/gpsd/geoclue-gpsd.c	2024-06-23 12:39:00.639746354 +0200
+@@ -264,7 +264,7 @@ geoclue_gpsd_update_position (GeoclueGps
+ 	
+ 	gc_iface_position_emit_position_changed 
+ 		(GC_IFACE_POSITION (gpsd), gpsd->last_pos_fields,
+-		 (int)(last_fix->time+0.5), 
++		 last_fix->time.tv_sec + (last_fix->time.tv_nsec >= 500000000L), 
+ 		 last_fix->latitude, last_fix->longitude, last_fix->altitude, 
+ 		 gpsd->last_accuracy);
+ 	
+@@ -323,7 +323,7 @@ geoclue_gpsd_update_velocity (GeoclueGps
+ 		
+ 		gc_iface_velocity_emit_velocity_changed 
+ 			(GC_IFACE_VELOCITY (gpsd), gpsd->last_velo_fields,
+-			 (int)(last_fix->time+0.5),
++			 last_fix->time.tv_sec + (last_fix->time.tv_nsec >= 500000000L),
+ 			 last_fix->speed, last_fix->track, last_fix->climb);
+ 	}
+ }
+@@ -334,12 +334,12 @@ geoclue_gpsd_update_status (GeoclueGpsd
+ 	GeoclueStatus status;
+ 	
+ 	/* gpsdata->online is supposedly always up-to-date */
+-	if (gpsd->gpsdata->online <= 0) {
++	if (gpsd->gpsdata->online.tv_sec <= 0) {
+ 		status = GEOCLUE_STATUS_UNAVAILABLE;
+ 	} else if (gpsd->gpsdata->set & STATUS_SET) {
+ 		gpsd->gpsdata->set &= ~(STATUS_SET);
+ 		
+-		if (gpsd->gpsdata->status > 0) {
++		if (gpsd->gpsdata->fix.status > 0) {
+ 			status = GEOCLUE_STATUS_AVAILABLE;
+ 		} else {
+ 			status = GEOCLUE_STATUS_ACQUIRING;
+@@ -435,7 +435,7 @@ get_position (GcIfacePosition       *gc,
+ {
+ 	GeoclueGpsd *gpsd = GEOCLUE_GPSD (gc);
+ 	
+-	*timestamp = (int)(gpsd->last_fix->time+0.5);
++	*timestamp = gpsd->last_fix->time.tv_sec + (gpsd->last_fix->time.tv_nsec >= 500000000L);
+ 	*latitude = gpsd->last_fix->latitude;
+ 	*longitude = gpsd->last_fix->longitude;
+ 	*altitude = gpsd->last_fix->altitude;
+@@ -462,7 +462,7 @@ get_velocity (GcIfaceVelocity       *gc,
+ {
+ 	GeoclueGpsd *gpsd = GEOCLUE_GPSD (gc);
+ 	
+-	*timestamp = (int)(gpsd->last_fix->time+0.5);
++	*timestamp = gpsd->last_fix->time.tv_sec + (gpsd->last_fix->time.tv_nsec >= 500000000L);
+ 	*speed = gpsd->last_fix->speed;
+ 	*direction = gpsd->last_fix->track;
+ 	*climb = gpsd->last_fix->climb;
