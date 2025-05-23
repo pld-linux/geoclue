@@ -9,7 +9,7 @@ Summary:	A modular geoinformation service
 Summary(pl.UTF-8):	Modularna usługa geoinformacyjna
 Name:		geoclue
 Version:	0.12.99
-Release:	8
+Release:	9
 License:	LGPL v2+
 Group:		Applications
 Source0:	https://people.freedesktop.org/~hadess/%{name}-%{version}.tar.gz
